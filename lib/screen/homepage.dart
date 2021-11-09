@@ -27,8 +27,10 @@ class _HomePageState extends State<HomePage> {
 
 
   List<RecipeResponse> myRecipeResponse = [];
+  bool doneLoading = false;
 
   void initState(){
+    getHttp();
     super.initState();
   }
 
@@ -36,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     try {
       print("Making HTTP Call...");
       var response = await Dio().get(
-        'https://random-recipes.p.rapidapi.com/ai-quotes/12', options: Options(
+        'https://random-recipes.p.rapidapi.com/ai-quotes/100', options: Options(
           headers: {
           'x-rapidapi-host': 'random-recipes.p.rapidapi.com',
           'x-rapidapi-key': 'b33fbb332emsh0eb6606de1a59fbp142e48jsn0dff19f538e3'
@@ -56,6 +58,9 @@ class _HomePageState extends State<HomePage> {
       print(e);
       print("Closing HTTP Call...");
     }
+    setState(() {
+      doneLoading = true;
+    });
   }
 
   @override
@@ -84,18 +89,20 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     height: MediaQuery.of(context).size.height * 0.9,
                     width: MediaQuery.of(context).size.width,
-                    child: ListView.builder(
-                        itemCount: foodMap.length,
+                    child: doneLoading ?
+                    ListView.builder(
+                        itemCount: myRecipeResponse.length,
                         itemBuilder: (context, int index) {
-                      return GestureDetector(
-                        onTap: (){
-                          getHttp();
-                          setState(() {
-                          });
-                        },
-                        child: FoodContainer(name: nameOfFoods[index], picture: foodMap[nameOfFoods[index]],)
-                      );
-                    })
+                          return GestureDetector(
+                              onTap: (){},
+                              child: doneLoading ?
+                              FoodContainer(name: myRecipeResponse[index].title, picture: myRecipeResponse[index].image, networkImage: true)
+                                  :
+                              FoodContainer(name: nameOfFoods[index], picture: foodMap[nameOfFoods[index]],)
+                          );
+                        })
+                        :
+                    Center(child: CircularProgressIndicator(color: Colors.white,))
                   ),
                 ],
               ),
