@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:food_for_you/models/recipe_response.dart';
 import 'package:food_for_you/widget/food_container.dart';
+import '';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
           appBar: AppBar(
-            title: Text('Food Categories', textAlign: TextAlign.center, style: TextStyle(color: Colors.white54),),
+            title: Text('Food Recipes', textAlign: TextAlign.center, style: TextStyle(color: Colors.white54),),
             backgroundColor: Colors.transparent,
             elevation: 0.0,
           ),
