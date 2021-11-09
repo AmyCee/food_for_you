@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:food_for_you/models/recipe_response.dart';
 import 'package:food_for_you/widget/food_container.dart';
+import 'package:food_for_you/widget/recipe_view.dart';
 import '';
 
 class HomePage extends StatefulWidget {
@@ -67,24 +68,25 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
           appBar: AppBar(
-            title: Text('Food Recipes', textAlign: TextAlign.center, style: TextStyle(color: Colors.white54),),
+            title: Text('Food Recipes', textAlign: TextAlign.center, style: TextStyle(color: Colors.black),),
             backgroundColor: Colors.transparent,
             elevation: 0.0,
           ),
-          extendBodyBehindAppBar: true,
+          // extendBodyBehindAppBar: true,
           body: SingleChildScrollView(
             child: Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/home_page_background.jpeg"),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(Colors.black54, BlendMode.darken)
-                ),
+                color: Colors.white,
+                // image: DecorationImage(
+                //   image: AssetImage("assets/images/home_page_background.jpeg"),
+                //   fit: BoxFit.cover,
+                //   //colorFilter: ColorFilter.mode(Colors.bla, BlendMode.darken)
+                // ),
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height * 0.9,
@@ -93,16 +95,19 @@ class _HomePageState extends State<HomePage> {
                     ListView.builder(
                         itemCount: myRecipeResponse.length,
                         itemBuilder: (context, int index) {
-                          return GestureDetector(
-                              onTap: (){},
-                              child: doneLoading ?
-                              FoodContainer(name: myRecipeResponse[index].title, picture: myRecipeResponse[index].image, networkImage: true)
-                                  :
-                              FoodContainer(name: nameOfFoods[index], picture: foodMap[nameOfFoods[index]],)
-                          );
+                          return doneLoading ?
+                          FoodContainer(name: myRecipeResponse[index].title, picture: myRecipeResponse[index].image, networkImage: true, widgetClick: (){
+                            print("Trying to work");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => RecipeView(response: myRecipeResponse[index])),
+                            );
+                          },)
+                              :
+                          FoodContainer(name: nameOfFoods[index], picture: foodMap[nameOfFoods[index]],);
                         })
                         :
-                    Center(child: CircularProgressIndicator(color: Colors.white,))
+                    Center(child: CircularProgressIndicator())
                   ),
                 ],
               ),
