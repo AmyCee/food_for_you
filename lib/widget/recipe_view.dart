@@ -26,9 +26,6 @@ class RecipeView extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
               SizedBox(height: 20,),
-              NewStopWatch(),
-              Text((response.times!.length == 0) ? "" : response.times![0]),
-              SizedBox(height: 20,),
               // Text("Ingredients", textScaleFactor: 1.0, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold), ),
               Accordion(
                 children: [
@@ -52,7 +49,6 @@ class RecipeView extends StatelessWidget {
                       ),)
                 ]
               ),
-
               // Container(
               //   padding: EdgeInsets.all(16.0),
               //   height: MediaQuery.of(context).size.height * 0.4,
@@ -69,6 +65,9 @@ class RecipeView extends StatelessWidget {
               //     }),
               // ),
               // ListView(children: response.instructions!.map((word)=> Text()).toList())
+              SizedBox(height: 20,),
+              NewStopWatch(),
+              Text((response.times!.length == 0) ? "" : response.times![0]),
             ],
           ),
         ),
