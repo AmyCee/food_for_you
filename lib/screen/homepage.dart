@@ -1,9 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:food_for_you/http/get_food_http_request.dart';
+import 'package:food_for_you/mixin/food_mixin.dart';
 import 'package:food_for_you/models/recipe_response.dart';
+import 'package:food_for_you/provider/food_provider.dart';
 import 'package:food_for_you/widget/food_container.dart';
 import 'package:food_for_you/widget/recipe_view.dart';
+import 'package:provider/provider.dart';
+
+class TempPage extends StatelessWidget {
+  const TempPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(create: (_) => FoodProvider(),
+      child: HomePage(),
+    );
+  }
+}
 
 
 class HomePage extends StatefulWidget {
@@ -13,7 +28,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with FoodMixin{
   List<String> nameOfFoods = [
     "Rice recipes",
     "Soup recipes",
@@ -26,93 +41,81 @@ class _HomePageState extends State<HomePage> {
     "Rice recipes" : "assets/images/rice_recipes.jpg",
   };
 
-
-  List<RecipeResponse> myRecipeResponse = [];
-  bool doneLoading = false;
-
   void initState(){
-    getHttp();
+    getFoodRecipe(context, 10);
     super.initState();
-  }
-
-  void getHttp() async {
-    try {
-      print("Making HTTP Call...");
-      var response = await Dio().get(
-        'https://random-recipes.p.rapidapi.com/ai-quotes/100', options: Options(
-          headers: {
-          'x-rapidapi-host': 'random-recipes.p.rapidapi.com',
-          'x-rapidapi-key': 'b33fbb332emsh0eb6606de1a59fbp142e48jsn0dff19f538e3'
-          }
-        )
-      );
-      // print(response);
-      for (int i = 0; i < response.data.length; i++){
-        RecipeResponse tempRecipe = RecipeResponse.fromJson(response.data[i]);
-        myRecipeResponse.add(tempRecipe);
-      }
-      print(myRecipeResponse[0].title);
-      print(myRecipeResponse[1].title);
-      print(myRecipeResponse[2].title);
-      print("Closing HTTP Call...");
-    } catch (e) {
-      print(e);
-      print("Closing HTTP Call...");
-    }
-    setState(() {
-      doneLoading = true;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-          appBar: AppBar(
-            title: Text('Food Recipes', textAlign: TextAlign.center, style: TextStyle(color: Colors.black),),
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-          ),
-          // extendBodyBehindAppBar: true,
-          body: SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                // image: DecorationImage(
-                //   image: AssetImage("assets/images/home_page_background.jpeg"),
-                //   fit: BoxFit.cover,
-                //   //colorFilter: ColorFilter.mode(Colors.bla, BlendMode.darken)
-                // ),
-              ),
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.9,
-                    width: MediaQuery.of(context).size.width,
-                    child: doneLoading ?
-                    ListView.builder(
-                        itemCount: myRecipeResponse.length,
-                        itemBuilder: (context, int index) {
-                          return doneLoading ?
-                          FoodContainer(name: myRecipeResponse[index].title, picture: myRecipeResponse[index].image, networkImage: true, widgetClick: (){
-                            print("Trying to work");
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => RecipeView(response: myRecipeResponse[index])),
-                            );
-                          },)
-                              :
-                          FoodContainer(name: nameOfFoods[index], picture: foodMap[nameOfFoods[index]],);
-                        })
-                        :
-                    Center(child: CircularProgressIndicator())
-                  ),
-                ],
+    return Consumer<FoodProvider>(
+        builder: (context, provider, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Food Recipes', textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black),),
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+            ),
+            // extendBodyBehindAppBar: true,
+            body: SingleChildScrollView(
+              child: Container(
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  // image: DecorationImage(
+                  //   image: AssetImage("assets/images/home_page_background.jpeg"),
+                  //   fit: BoxFit.cover,
+                  //   //colorFilter: ColorFilter.mode(Colors.bla, BlendMode.darken)
+                  // ),
+                ),
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height * 0.9,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
+                        child: provider.doneLoading ?
+                        ListView.builder(
+                            itemCount: provider.providerRecipe!.length,
+                            itemBuilder: (context, int index) {
+                              return FoodContainer(
+                                name: provider.providerRecipe![index].title,
+                                picture: provider.providerRecipe![index].image,
+                                networkImage: true,
+                                widgetClick: () {
+                                  print("Trying to work");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) =>
+                                        RecipeView(response: provider
+                                            .providerRecipe![index])),
+                                  );
+                                },
+                              );
+                            })
+                            :
+                        Center(child: CircularProgressIndicator())
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-    );
+          );
+        });
   }
+
 }
