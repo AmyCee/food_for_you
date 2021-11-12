@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> with FoodMixin{
   };
 
   void initState(){
-    getFoodRecipe(context, 10);
+    getFoodRecipe(context, 10, false);
     super.initState();
   }
 
@@ -52,6 +52,17 @@ class _HomePageState extends State<HomePage> with FoodMixin{
         builder: (context, provider, child) {
           return Scaffold(
             appBar: AppBar(
+              actions: [
+                GestureDetector(
+                  onTap: (){
+                    getFoodRecipe(context, 10, true);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.refresh),
+                  )
+                )
+              ],
               title: Text('Food Recipes', textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.black),),
               backgroundColor: Colors.transparent,
