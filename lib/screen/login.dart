@@ -74,7 +74,7 @@ class _LoginState extends State<Login> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
+                            MaterialPageRoute(builder: (context) => TempPage()),
                           );
                         },
                         color: HexColor('82BB25'),
